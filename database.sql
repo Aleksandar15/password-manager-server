@@ -28,7 +28,7 @@ CREATE TABLE passwords(
 INSERT INTO users (user_name, user_email, user_password) VALUES ('ALEK', 'alek@gmail.com', 'password');
 
 -- insert fake passwords info:
-INSERT INTO passwords (user_id, site_name, site_email, site_password) VALUES ('fake-vault-id-1', 'instagram.com', 'alek@gmail.com', 'hello password');
+INSERT INTO passwords (user_id, site_name, site_email, site_password, site_iv) VALUES ('fake-user-id-1', 'instagram.com', 'alek@gmail.com', 'encypted-password', 'encrypted-iv') RETURNING *;
 
 -- Modify refresh_token
 UPDATE users SET refresh_token='{jwt-token}' WHERE user_email='alek@gmail.com'; -- Add refresh_token to database
