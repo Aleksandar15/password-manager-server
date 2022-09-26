@@ -105,8 +105,25 @@ const handleRefreshToken = async (req, res) => {
         const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
         console.log("refreshTokenController CONTINUES...");
 
+        const RTexpiryTimeInSeconds = payload.exp - payload.iat;
+        console.log("RTexpiryTimeInSeconds: ", RTexpiryTimeInSeconds);
+        const currentDate = new Date();
+        console.log("currentDate: ", currentDate);
+        const currentDateInEpoch = Date.parse(currentDate);
+        console.log(
+          "currentDateInEpoch: ",
+          currentDateInEpoch,
+          "payload.exp: ",
+          payload.exp
+        );
+        const newRTexpiryTimeSeconds =
+          payload.exp - Date.parse(new Date()) / 1000;
+
         // Create new refresh token every time we send the new access token (so we can reuse refresh token ONLY 1 time)
-        const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "1h");
+        const newRefreshToken = jwtRefreshGenerator(
+          user.rows[0].user_id,
+          newRTexpiryTimeSeconds
+        );
         const newRefreshTokenDatabase = await database.query(
           "UPDATE users SET refresh_token=$1 WHERE user_id = $2 RETURNING user_id, refresh_token",
           [[...newRefreshTokenArray, newRefreshToken], user.rows[0].user_id]
