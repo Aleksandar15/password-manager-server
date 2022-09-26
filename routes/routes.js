@@ -7,8 +7,11 @@ const database = require("../database");
 
 const bcrypt = require("bcrypt");
 
-const jwtGenerator = require("../utils/jwtGenerator");
+const { jwtGenerator, jwtRefreshGenerator } = require("../utils/jwtGenerator");
 const authorization = require("../middlewares/authorization");
+
+const refreshTokenHandler = require("../controllers/refreshTokenController");
+const logoutController = require("../controllers/logoutController");
 
 // ROUTES \\
 
@@ -75,10 +78,53 @@ router.post("/login", validInfo, async (req, res) => {
       return res.status(401).json("Email/password combinations is wrong");
     }
 
-    // 4 - handle them the token if all above passes
-    const token = jwtGenerator(user.rows[0].user_id);
+    // 4- handle them the token if all above passes
+    const cookies = req.cookies;
+    const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
+    const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "1h");
+    // const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "7s");
+    const newRefreshTokenArray = !cookies?.refreshToken
+      ? user.rows[0].refresh_token
+      : user.rows[0].refresh_token.filter(
+          (allRTinDB) => allRTinDB !== cookies.refreshToken
+        );
 
-    res.status(200).json({ token });
+    if (cookies?.refreshToken) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+      });
+    }
+
+    console.log(
+      "newRefreshTokenArray: ",
+      newRefreshTokenArray,
+      "+ [...newRefreshTokenArray]: ",
+      [...newRefreshTokenArray],
+      "+ ...newRefreshTokenArray: ",
+      newRefreshTokenArray
+    );
+
+    // Saving refreshToken with current user
+    const refreshTokenDatabase = await database.query(
+      "UPDATE users SET refresh_token=$1 WHERE user_id = $2 RETURNING refresh_token",
+      [[...newRefreshTokenArray, newRefreshToken], user.rows[0].user_id]
+    );
+    console.log(
+      "refreshTokenDATABASE Inside /login: ",
+      refreshTokenDatabase.rows[0]
+    );
+    // Create secure cookie with refresh token
+    res.cookie("refreshToken", newRefreshToken, {
+      maxAge: 300000, //5 minutes
+      httpOnly: true,
+      secure: true, //requires "httpS" -> remove this when running on localhost (with insecure protocol "HTTP" causes errors, but errors IN PRODUCTION means good thing: its NOT Working on insecure Protocol)
+      sameSite: "None",
+    });
+
+    // Send access token to the user
+    res.status(200).json({ accessToken });
   } catch (err) {
     console.log("Login Server ERror: ", err.message);
     res.status(500).json("Login SERVER SIDE Error!");
@@ -89,6 +135,9 @@ router.get("/is-verify", authorization, async (req, res) => {
   res.status(200).json(true);
 });
 
-// router.delete('/logout', )
+router.get("/refresh", refreshTokenHandler.handleRefreshToken);
+
+// router.get("/logout", logoutController.handleLogout);
+router.delete("/logout", logoutController.handleLogout);
 
 module.exports = router;
