@@ -12,6 +12,8 @@ const authorization = require("../middlewares/authorization");
 
 const refreshTokenHandler = require("../controllers/refreshTokenController");
 const logoutController = require("../controllers/logoutController");
+//
+const jwt = require("jsonwebtoken");
 
 // ROUTES \\
 
@@ -90,6 +92,37 @@ router.post("/login", validInfo, async (req, res) => {
         );
 
     if (cookies?.refreshToken) {
+      // Detect refresh token reuse
+      const refreshToken = cookies.refreshToken;
+      const payload = jwt.verify(refreshToken, process.env.jwtRefreshSecret, {
+        ignoreExpiration: true,
+      });
+      console.log("payload: ", payload);
+      const allRefreshTokens = await database.query(
+        "SELECT refresh_token FROM users WHERE user_id=$1",
+        [payload.user_id]
+      );
+      console.log("allRefreshTokens.rows[0]: ", allRefreshTokens.rows[0]);
+      const refreshTokenExistsInDatabase =
+        allRefreshTokens.rows[0].refresh_token.filter(
+          (allRTinDB) => allRTinDB === refreshToken
+        );
+
+      if (refreshTokenExistsInDatabase[0] !== refreshToken) {
+        res.clearCookie("refreshToken", {
+          httpOnly: true,
+          sameSite: "None",
+          secure: true,
+        });
+        const hackedUser = await database.query(
+          "UPDATE users SET refresh_token='{}' WHERE user_id=$1 RETURNING *",
+          [payload.user_id]
+        );
+        console.log("hackedUser on /login endpoint: ", hackedUser.rows[0]);
+        return res
+          .status(403)
+          .json("Detected used refresh token in user's cookies"); //User must always have unused refresh token unless he logged out + I also shouldnt be checking against expired tokens BUT THEN `undefined!=='token'` ?->THATS SADLY TRUTHY statement and will return WRONG JSON so I Msut use an jwt.verify with a whole error and decoded HANDLERS?!
+      }
       res.clearCookie("refreshToken", {
         httpOnly: true,
         sameSite: "None",
@@ -103,7 +136,7 @@ router.post("/login", validInfo, async (req, res) => {
       "+ [...newRefreshTokenArray]: ",
       [...newRefreshTokenArray],
       "+ ...newRefreshTokenArray: ",
-      newRefreshTokenArray
+      ...newRefreshTokenArray
     );
 
     // Saving refreshToken with current user
