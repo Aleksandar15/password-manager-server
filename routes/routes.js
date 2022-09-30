@@ -47,10 +47,13 @@ router.post("/register", validInfo, async (req, res) => {
       [name, email, hashedPassword]
     );
 
-    //5- Create a Token for them
-    const token = jwtGenerator(newUser.rows[0].user_id);
+    // //5- Create a Token for them
+    // const token = jwtGenerator(newUser.rows[0].user_id);
 
-    res.status(200).json({ token });
+    // res.status(200).json({ token });
+
+    // 5 - Responsd with success message:
+    res.status(200).json("Register successful!");
   } catch (err) {
     console.log("REGISTER Server Side Error: ", err.message);
     console.log("REGISTER Server Side err: ", err);
@@ -90,6 +93,13 @@ router.post("/login", validInfo, async (req, res) => {
       : user.rows[0].refresh_token.filter(
           (allRTinDB) => allRTinDB !== cookies.refreshToken
         );
+
+    console.log(
+      "cookies?.refreshToken: ",
+      cookies?.refreshToken,
+      "cookies: ",
+      cookies
+    );
 
     if (cookies?.refreshToken) {
       // Detect refresh token reuse
@@ -150,7 +160,10 @@ router.post("/login", validInfo, async (req, res) => {
     );
     // Create secure cookie with refresh token
     res.cookie("refreshToken", newRefreshToken, {
-      maxAge: 300000, //5 minutes
+      // maxAge: 300000, //5 minutes
+      // maxAge: 3600000, //1 hour
+      // maxAge: 60 * 1000 * 60, // 1 hour
+      maxAge: 60 * 1000 * 60 * 24, // 1 day
       httpOnly: true,
       secure: true, //requires "httpS" -> remove this when running on localhost (with insecure protocol "HTTP" causes errors, but errors IN PRODUCTION means good thing: its NOT Working on insecure Protocol)
       sameSite: "None",
@@ -160,7 +173,7 @@ router.post("/login", validInfo, async (req, res) => {
     res.status(200).json({ accessToken });
   } catch (err) {
     console.log("Login Server ERror: ", err.message);
-    res.status(500).json("Login SERVER SIDE Error!");
+    res.status(500).json("Login SERVER SIDE Error!"); //now ON THE FRONTEND:this error triggers when cookies.refreshToken has wrong TOKEN
   }
 });
 

@@ -5,6 +5,7 @@ const router = express.Router();
 
 const { encrypt, decrypt } = require("../utils/passwordEncryptionHandler");
 
+// GET passwords vault
 router.get("/manager", authorization, async (req, res) => {
   try {
     //req.user===payload.user_id FROM Authorization
@@ -85,6 +86,7 @@ router.put("/passwords/:id", authorization, async (req, res) => {
       email: site_email,
       password: site_password,
     } = req.body;
+    console.log("req.body UPDATE server: ", req.body);
     const encryptedPassword = encrypt(site_password);
     const { password: site_pw_encrypted, iv: site_pw_iv } = encryptedPassword;
     const updateStoredPassword = await database.query(
@@ -96,7 +98,8 @@ router.put("/passwords/:id", authorization, async (req, res) => {
       return res.json("This DATA doesn't belong to you");
     }
 
-    res.json("Password INFO was UPDATED!");
+    // res.json("Password INFO was UPDATED!"); //ORIGINAL didnt had status code 200
+    res.status(200).json("Password INFO was UPDATED!");
   } catch (err) {
     console.log("Error Updating a Password Vault: ", err);
     res.status(500).json("UPDATE password vault: SERVER SIDE ERROR");
