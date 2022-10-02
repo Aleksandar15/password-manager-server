@@ -1,5 +1,4 @@
 const database = require("../database");
-// NEW BY ME:
 const jwt = require("jsonwebtoken");
 
 const handleLogoutAllSessions = async (req, res) => {
@@ -28,7 +27,6 @@ const handleLogoutAllSessions = async (req, res) => {
         sameSite: "None",
         secure: true,
       });
-      // return res.status(200).json("User doesn't have refreshToken");
       return res.status(204).json("User doesn't have refreshToken");
     }
 
