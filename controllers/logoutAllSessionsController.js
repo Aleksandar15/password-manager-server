@@ -27,7 +27,7 @@ const handleLogoutAllSessions = async (req, res) => {
         sameSite: "None",
         secure: true,
       });
-      return res.status(204).json("User doesn't have refreshToken");
+      return res.status(204).json("User not found by that refreshToken"); ///someone replaced it with wrong refreshToken in Devtools
     }
 
     // Delete refreshToken if it exists in database:

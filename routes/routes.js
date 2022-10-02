@@ -60,7 +60,7 @@ router.post("/register", validInfo, async (req, res) => {
 router.post("/login", validInfo, async (req, res) => {
   try {
     // 1-  destructure req.body
-    const { email, password } = req.body;
+    const { email, password, loginForever } = req.body;
 
     console.log("req.body LOGIN::::::::", req.body);
     // 2- check if user exists by its EMAIL
@@ -82,8 +82,14 @@ router.post("/login", validInfo, async (req, res) => {
     // 4- handle them the token if all above passes
     const cookies = req.cookies;
     const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
-    const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "1h");
-    // const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "7s"); //For testing purposes
+    const expiryTime = loginForever ? "999 years" : "1h";
+    // const expiryTime = loginForever ? "999 years" : "7s";
+    console.log("expiryTime ~~~~~ INSIDE /login: ", expiryTime);
+
+    const newRefreshToken = jwtRefreshGenerator(
+      user.rows[0].user_id,
+      expiryTime
+    );
 
     console.log("user.rows[0].refreshToken: ", user.rows[0].refreshToken);
     const newRefreshTokenArray = !cookies?.refreshToken
@@ -176,6 +182,8 @@ router.get("/is-verify", authorization, async (req, res) => {
   res.status(200).json(true);
 });
 
+router.get("/is-user-verified", publicRoutesAuth);
+
 router.get("/refresh", refreshTokenHandler.handleRefreshToken);
 
 router.delete("/logout", logoutController.handleLogout);
@@ -184,7 +192,5 @@ router.delete(
   "/logoutallsessions",
   logoutAllSessionsController.handleLogoutAllSessions
 );
-
-router.get("/is-user-verified", publicRoutesAuth);
 
 module.exports = router;

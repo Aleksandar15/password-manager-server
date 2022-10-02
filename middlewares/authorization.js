@@ -27,6 +27,15 @@ module.exports = async (req, res, next) => {
       return res.status(401).json("Session expired");
     }
 
+    console.log(
+      "~~~~~IMPORTANT cookies?.refreshToken INSIDE Authorization: ",
+      cookies?.refreshToken
+    );
+    // Case 3: user has removed cookies
+    if (!cookies?.refreshToken) {
+      return res.status(401).json("User has removed cookies");
+    }
+
     // 2 - check if headers are correct
     if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json("Error Authorizing"); //NEW: I was wrong saying this wont run: it run ALWAYS when TOKEN IS MISSING (Great!) ON Frontend I keep having 'You are not authorized to view this page.'. //OLD~>//Now(that I have temporary cookies on expired refresh token) its Error Authorizing CODE-WISE, this will almost never be run on FRONTEND
