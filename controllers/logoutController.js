@@ -1,5 +1,4 @@
 const database = require("../database");
-// NEW BY ME:
 const jwt = require("jsonwebtoken");
 
 const handleLogout = async (req, res) => {
