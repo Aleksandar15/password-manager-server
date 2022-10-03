@@ -24,7 +24,7 @@ const register = async (req, res) => {
 
     //4- Save the user to the database
     const newUser = await database.query(
-      "INSERT INTO users (user_name, user_email, user_password, refresh_token) VALUES ($1, $2, $3) RETURNING user_name ,user_email   ,  user_id",
+      "INSERT INTO users (user_name, user_email, user_password, refresh_token) VALUES ($1, $2, $3, $4) RETURNING user_name ,user_email   ,  user_id",
       [name, email, hashedPassword, []]
     );
 
