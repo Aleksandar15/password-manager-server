@@ -27,10 +27,6 @@ module.exports = async (req, res, next) => {
       return res.status(401).json("Session expired");
     }
 
-    console.log(
-      "~~~~~IMPORTANT cookies?.refreshToken INSIDE Authorization: ",
-      cookies?.refreshToken
-    );
     // Case 3: user has removed cookies
     if (!cookies?.refreshToken) {
       return res.status(401).json("User has removed cookies");

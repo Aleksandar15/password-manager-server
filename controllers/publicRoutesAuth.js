@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const publicRoutesAuth = (req, res) => {
   const cookies = req.cookies;
 
-  if (!cookies) return res.status(401).json("Missing cookies");
+  if (!cookies?.refreshToken) return res.status(401).json("Missing cookies");
 
   const refreshToken = cookies.refreshToken;
   // Evaulate refreshToken
