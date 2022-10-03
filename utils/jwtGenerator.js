@@ -5,7 +5,7 @@ const jwtGenerator = (user_id, expiryTime) => {
     user_id,
   };
 
-  return jwt.sign(payload, process.env.jwtSecret, { expiresIn: expiryTime }); //Original working
+  return jwt.sign(payload, process.env.jwtSecret, { expiresIn: expiryTime });
 };
 
 const jwtRefreshGenerator = (user_id, expiryTime) => {
