@@ -6,7 +6,7 @@ const handleLogout = async (req, res) => {
     const cookies = req.cookies;
     if (!cookies?.refreshToken) {
       console.log("Missing cookies INSIDE logoutController.js");
-      return res.status(200).json("Missing cookies");
+      return res.status(401).json("Missing cookies - logout");
     }
     const refreshToken = cookies.refreshToken;
 
@@ -27,7 +27,9 @@ const handleLogout = async (req, res) => {
         sameSite: "None",
         secure: true,
       });
-      return res.status(204).json("User not found by that refreshToken"); ///someone replaced it with wrong refreshToken in Devtools
+      return res
+        .status(204)
+        .json("User not found by that refreshToken - logout"); ///User himself replaced it with wrong refreshToken in Devtools
     }
 
     // Delete refreshToken if it exists in database:
@@ -56,7 +58,7 @@ const handleLogout = async (req, res) => {
     res.status(200).json("Successful logout");
   } catch (err) {
     console.log("handleLogout err: ", err);
-    res.status(403).json(err.message);
+    res.status(500).json("Logout error");
   }
 };
 

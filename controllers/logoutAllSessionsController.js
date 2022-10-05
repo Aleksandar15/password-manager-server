@@ -4,12 +4,22 @@ const jwt = require("jsonwebtoken");
 const handleLogoutAllSessions = async (req, res) => {
   try {
     const cookies = req.cookies;
+    console.log(
+      "cookies inside logoutAllSessionsController: ",
+      cookies,
+      " + & !cookies?.refreshToken: ",
+      !cookies?.refreshToken
+    );
     if (!cookies?.refreshToken) {
-      console.log("Missing cookies INSIDE logoutController.js");
-      return res.status(200).json("Missing cookies");
+      console.log("Missing cookies INSIDE logoutAllSessionsController.js");
+      return res.status(401).json("Missing cookies - logout");
     }
     const refreshToken = cookies.refreshToken;
-
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
     // Is refreshToken in database?
     const payload = jwt.verify(refreshToken, process.env.jwtRefreshSecret, {
       ignoreExpiration: true,
@@ -18,16 +28,26 @@ const handleLogoutAllSessions = async (req, res) => {
       "SELECT user_id, refresh_token FROM users WHERE user_id = $1",
       [payload.user_id]
     );
-    console.log("user.rows[0] INSIDE logoutController", user.rows[0]);
-    console.log("refreshToken INSIDE logoutController.js: ", refreshToken);
+    console.log(
+      "user.rows[0] INSIDE logoutAllSessionsController",
+      user.rows[0]
+    );
+    console.log(
+      "refreshToken INSIDE logoutAllSessionsController.js: ",
+      refreshToken
+    );
     if (user.rows.length === 0) {
-      console.log("User doesn't have cookies INSIDE logoutController.js");
+      console.log(
+        "User doesn't have cookies INSIDE logoutAllSessionsController.js"
+      );
       res.clearCookie("refreshToken", {
         httpOnly: true,
         sameSite: "None",
         secure: true,
       });
-      return res.status(204).json("User not found by that refreshToken"); ///someone replaced it with wrong refreshToken in Devtools
+      return res
+        .status(204)
+        .json("User not found by that refreshToken - logout"); ///User himself replaced it with wrong refreshToken in Devtools
     }
 
     // Delete refreshToken if it exists in database:
@@ -35,7 +55,7 @@ const handleLogoutAllSessions = async (req, res) => {
       (allRTinDB) => allRTinDB !== refreshToken
     );
     console.log(
-      "user.rows[0].refresh_token INSIDE logoutController: ",
+      "user.rows[0].refresh_token INSIDE logoutAllSessionsController: ",
       user.rows[0].refresh_token
     );
     const deleteRefreshToken = await database.query(
@@ -43,20 +63,15 @@ const handleLogoutAllSessions = async (req, res) => {
       [[], user.rows[0].user_id]
     );
     console.log(
-      "deleteRefreshToken.rows[0] INSIDE logoutController.js: ",
+      "deleteRefreshToken.rows[0] INSIDE logoutAllSessionsController.js: ",
       deleteRefreshToken.rows[0]
     );
 
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      sameSite: "None",
-      secure: true,
-    });
     console.log("Successful logout");
     res.status(200).json("Successful logout");
   } catch (err) {
     console.log("handleLogoutAllSessions err: ", err);
-    res.status(403).json(err.message);
+    res.status(500).json("Logout error");
   }
 };
 
