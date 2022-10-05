@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
 
     // #Case 1: user refreshToken has been used maliciously (handled in refreshTokenController)
     const cookies = req.cookies;
-    if (cookies?.isUserHacked) return res.status(401).json("Is user hacked?");
+    if (cookies?.isUserHacked) return res.status(403).json("Is user hacked?");
 
     // #Case 2: user session is expired (handled by refreshTokenController)
     if (cookies?.expiredRefreshToken) {
