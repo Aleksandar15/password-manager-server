@@ -11,7 +11,7 @@ const publicRoutesAuth = (req, res) => {
       sameSite: "None",
       secure: true,
     });
-    return res.status(401).json("Is user hacked? - publicRoutesAuth");
+    return res.status(403).json("Is user hacked? - publicRoutesAuth");
   }
 
   if (!cookies?.refreshToken) return res.status(401).json("Missing cookies");
