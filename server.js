@@ -8,10 +8,22 @@ const app = express();
 const routes = require("./routes/routes");
 
 const passwordManager = require("./routes/passwordManager");
+//
+const corsOptions = require("./config/corsOptions");
+const credentialsCORS = require("./middlewares/credentialsCORS");
+const cookieParser = require("cookie-parser");
 
 // middlewares
-app.use(cors());
+// app.use(cors()); //OROGINAL (OLD).
+// Handle options credentials check -> before CORS!
+// and fetch cookies credentials requirement
+app.use(credentialsCORS);
+app.use(cors(corsOptions));
+
 app.use(express.json());
+
+// middleware for cookies
+app.use(cookieParser());
 
 //routes
 app.get("/", async (req, res) => {

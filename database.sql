@@ -22,6 +22,8 @@ CREATE TABLE passwords(
   FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+-- ADDED new Column refresh_token
+ALTER TABLE users ADD refresh_token VARCHAR(255)[];
 
 -- Tests
 -- insert fake users
