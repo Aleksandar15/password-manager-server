@@ -37,7 +37,11 @@ const handleLogout = async (req, res) => {
     );
     console.log(
       "user.rows[0].refresh_token INSIDE logoutController: ",
-      user.rows[0].refresh_token
+      user.rows[0].refresh_token,
+      "newRefreshTokenArray: ",
+      newRefreshTokenArray,
+      "...newRefreshTokenArray: ",
+      ...newRefreshTokenArray
     );
     const deleteRefreshToken = await database.query(
       "UPDATE users SET refresh_token=$1 WHERE user_id=$2 RETURNING *",
