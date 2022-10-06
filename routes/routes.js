@@ -47,13 +47,10 @@ router.post("/register", validInfo, async (req, res) => {
       [name, email, hashedPassword]
     );
 
-    //5- Create a Token for them
-    const token = jwtGenerator(newUser.rows[0].user_id);
-
-    res.status(200).json({ token });
+    // 5 - Respond with success message:
+    res.status(200).json("Register successful!");
   } catch (err) {
     console.log("REGISTER Server Side Error: ", err.message);
-    console.log("REGISTER Server Side err: ", err);
     res.status(500).json("Server Side Error Registering!");
   }
 });
@@ -90,6 +87,13 @@ router.post("/login", validInfo, async (req, res) => {
       : user.rows[0].refresh_token.filter(
           (allRTinDB) => allRTinDB !== cookies.refreshToken
         );
+
+    console.log(
+      "cookies?.refreshToken: ",
+      cookies?.refreshToken,
+      "cookies: ",
+      cookies
+    );
 
     if (cookies?.refreshToken) {
       // Detect refresh token reuse
@@ -130,15 +134,6 @@ router.post("/login", validInfo, async (req, res) => {
       });
     }
 
-    console.log(
-      "newRefreshTokenArray: ",
-      newRefreshTokenArray,
-      "+ [...newRefreshTokenArray]: ",
-      [...newRefreshTokenArray],
-      "+ ...newRefreshTokenArray: ",
-      ...newRefreshTokenArray
-    );
-
     // Saving refreshToken with current user
     const refreshTokenDatabase = await database.query(
       "UPDATE users SET refresh_token=$1 WHERE user_id = $2 RETURNING refresh_token",
@@ -150,9 +145,10 @@ router.post("/login", validInfo, async (req, res) => {
     );
     // Create secure cookie with refresh token
     res.cookie("refreshToken", newRefreshToken, {
-      maxAge: 300000, //5 minutes
+      // maxAge: 60 * 1000 * 60, // 1 hour
+      maxAge: 60 * 1000 * 60 * 24, // 1 day
       httpOnly: true,
-      secure: true, //requires "httpS" -> remove this when running on localhost (with insecure protocol "HTTP" causes errors, but errors IN PRODUCTION means good thing: its NOT Working on insecure Protocol)
+      secure: true,
       sameSite: "None",
     });
 

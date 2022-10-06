@@ -50,3 +50,7 @@ SELECT * FROM users LEFT JOIN passwords ON users.user_id = passwords.user_id WHE
 -- \d+ users
 -- \d+ passwords
 -- CREATE extension IF NOT EXISTS "uuid-ossp"; -- install uuid inside postgres database
+
+-- -- MIGHT ADD:
+-- ON DELETE CASCADE -- is required to the FOREGIN KEY -> would allow to delete the referencing rows if I were to `DELETE FROM users WHERE user_id=$1`, otherwise will fail if there is data in `passwords` by the matching 'user_id'.
+-- ALTER TABLE passwords DROP CONSTRAINT passwords_user_id_fkey, ADD CONSTRAINT passwords_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;

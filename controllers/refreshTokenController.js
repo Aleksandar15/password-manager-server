@@ -133,7 +133,9 @@ const handleRefreshToken = async (req, res) => {
           newRefreshTokenDatabase.rows[0]
         );
         res.cookie("refreshToken", newRefreshToken, {
-          maxAge: 300000, //5 minutes
+          // maxAge: 300000, //5 minutes
+          // maxAge: 60 * 1000 * 60, // 1 hour
+          maxAge: 60 * 1000 * 60 * 24, // 1 day
           httpOnly: true,
           secure: true, //requires "httpS" -> remove this when running on localhost (with insecure protocol "HTTP" causes errors, but errors IN PRODUCTION means good thing: its NOT Working on insecure Protocol)
           sameSite: "None",
