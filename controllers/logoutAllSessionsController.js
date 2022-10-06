@@ -1,7 +1,7 @@
 const database = require("../database");
 const jwt = require("jsonwebtoken");
 
-const handleLogout = async (req, res) => {
+const handleLogoutAllSessions = async (req, res) => {
   try {
     const cookies = req.cookies;
     if (!cookies?.refreshToken) {
@@ -27,7 +27,6 @@ const handleLogout = async (req, res) => {
         sameSite: "None",
         secure: true,
       });
-      // return res.status(200).json("User doesn't have refreshToken");
       return res.status(204).json("User doesn't have refreshToken");
     }
 
@@ -41,7 +40,7 @@ const handleLogout = async (req, res) => {
     );
     const deleteRefreshToken = await database.query(
       "UPDATE users SET refresh_token=$1 WHERE user_id=$2 RETURNING *",
-      [[...newRefreshTokenArray], user.rows[0].user_id]
+      [[], user.rows[0].user_id]
     );
     console.log(
       "deleteRefreshToken.rows[0] INSIDE logoutController.js: ",
@@ -56,9 +55,9 @@ const handleLogout = async (req, res) => {
     console.log("Successful logout");
     res.status(200).json("Successful logout");
   } catch (err) {
-    console.log("handleLogout err: ", err);
+    console.log("handleLogoutAllSessions err: ", err);
     res.status(403).json(err.message);
   }
 };
 
-module.exports = { handleLogout };
+module.exports = { handleLogoutAllSessions };

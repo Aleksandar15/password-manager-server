@@ -14,6 +14,8 @@ const refreshTokenHandler = require("../controllers/refreshTokenController");
 const logoutController = require("../controllers/logoutController");
 //
 const jwt = require("jsonwebtoken");
+const logoutAllSessionsController = require("../controllers/logoutAllSessionsController");
+const { publicRoutesAuth } = require("../controllers/publicRoutesAuth");
 
 // ROUTES \\
 
@@ -41,10 +43,9 @@ router.post("/register", validInfo, async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     //4- Save the user to the database
-
     const newUser = await database.query(
-      "INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING user_name ,user_email   ,  user_id",
-      [name, email, hashedPassword]
+      "INSERT INTO users (user_name, user_email, user_password, refresh_token) VALUES ($1, $2, $3) RETURNING user_name ,user_email   ,  user_id",
+      [name, email, hashedPassword, []]
     );
 
     // 5 - Respond with success message:
@@ -61,6 +62,7 @@ router.post("/login", validInfo, async (req, res) => {
     // 1-  destructure req.body
     const { email, password } = req.body;
 
+    console.log("req.body LOGIN::::::::", req.body);
     // 2- check if user exists by its EMAIL
     const user = await database.query(
       "SELECT * FROM users WHERE user_email = $1",
@@ -81,7 +83,9 @@ router.post("/login", validInfo, async (req, res) => {
     const cookies = req.cookies;
     const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
     const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "1h");
-    // const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "7s");
+    // const newRefreshToken = jwtRefreshGenerator(user.rows[0].user_id, "7s"); //For testing purposes
+
+    console.log("user.rows[0].refreshToken: ", user.rows[0].refreshToken);
     const newRefreshTokenArray = !cookies?.refreshToken
       ? user.rows[0].refresh_token
       : user.rows[0].refresh_token.filter(
@@ -93,6 +97,15 @@ router.post("/login", validInfo, async (req, res) => {
       cookies?.refreshToken,
       "cookies: ",
       cookies
+    );
+
+    console.log(
+      "newRefreshTokenArray: ",
+      newRefreshTokenArray,
+      "+ [...newRefreshTokenArray]: ",
+      [...newRefreshTokenArray],
+      "+ ...newRefreshTokenArray: ",
+      ...newRefreshTokenArray
     );
 
     if (cookies?.refreshToken) {
@@ -145,9 +158,8 @@ router.post("/login", validInfo, async (req, res) => {
     );
     // Create secure cookie with refresh token
     res.cookie("refreshToken", newRefreshToken, {
-      // maxAge: 60 * 1000 * 60, // 1 hour
       maxAge: 60 * 1000 * 60 * 24, // 1 day
-      httpOnly: true,
+      httpOnly: true, //for Postman tests turn this off
       secure: true,
       sameSite: "None",
     });
@@ -166,7 +178,13 @@ router.get("/is-verify", authorization, async (req, res) => {
 
 router.get("/refresh", refreshTokenHandler.handleRefreshToken);
 
-// router.get("/logout", logoutController.handleLogout);
 router.delete("/logout", logoutController.handleLogout);
+
+router.delete(
+  "/logoutallsessions",
+  logoutAllSessionsController.handleLogoutAllSessions
+);
+
+router.get("/is-user-verified", publicRoutesAuth);
 
 module.exports = router;

@@ -8,10 +8,15 @@ const { encrypt, decrypt } = require("../utils/passwordEncryptionHandler");
 // GET passwords vault
 router.get("/manager", authorization, async (req, res) => {
   try {
-    //req.user===payload.user_id FROM Authorization
+    //req.user===payload.user_id FROM Authorization middleware
     const user = await database.query(
       "SELECT users.user_name, users.user_email, passwords.password_id, passwords.site_name, passwords.site_email, passwords.site_password, passwords.site_iv FROM users LEFT JOIN passwords on users.user_id=passwords.user_id WHERE users.user_id = $1 ORDER BY password_id ASC",
       [req.user]
+    );
+
+    console.log(
+      "~_~_~_~_~_~_~req.user INSIDE passwordManager /manager: ",
+      req.user
     );
 
     res.status(200).json(user.rows);
@@ -48,6 +53,7 @@ router.post(`/passwords`, authorization, async (req, res) => {
       email: site_email,
       password: site_password,
     } = req.body;
+    console.log("req.body INSIDE POST password addPassword: ", req.body);
     const encryptedPassword = encrypt(site_password);
     const { password: site_pw_encrypted, iv: site_pw_iv } = encryptedPassword;
     const addPassword = await database.query(
