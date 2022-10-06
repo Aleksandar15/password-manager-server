@@ -11,7 +11,7 @@ const handleRefreshToken = async (req, res) => {
     }
     const refreshToken = cookies.refreshToken;
     res.clearCookie("refreshToken", {
-      httpOnly: true,
+      // httpOnly: true,
       sameSite: "None",
       secure: true,
     });
@@ -76,7 +76,7 @@ const handleRefreshToken = async (req, res) => {
         const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
         console.log("refreshTokenController CONTINUES...");
 
-        // Have the remaining time of the token that is about to be invalidated
+        // Grab the remaining time of the token that is about to be invalidated
         const newRTexpiryTimeSeconds =
           payload.exp - Date.parse(new Date()) / 1000;
         console.log("newRTexpiryTimeSeconds: ", newRTexpiryTimeSeconds);
@@ -93,7 +93,7 @@ const handleRefreshToken = async (req, res) => {
         res.cookie("refreshToken", newRefreshToken, {
           // maxAge: 60 * 1000 * 60, // 1 hour
           maxAge: 60 * 1000 * 60 * 24, // 1 day
-          httpOnly: true,
+          // httpOnly: true,
           secure: true,
           sameSite: "None",
         });
