@@ -61,7 +61,8 @@ router.post(`/passwords`, authorization, async (req, res) => {
       [req.user, site_name, site_email, site_pw_encrypted, site_pw_iv]
     );
 
-    res.json(addPassword.rows[0]);
+    // res.json(passwordInfo.rows[0]);
+    res.status(200).json("ADDED to the password vault");
   } catch (err) {
     console.log("POST: addPassword err: ", err);
     res.status(500).json("addPassword SERVER SIDE ERROR");
@@ -89,7 +90,6 @@ router.put("/passwords/:id", authorization, async (req, res) => {
       return res.json("This DATA doesn't belong to you");
     }
 
-    // res.json("Password INFO was UPDATED!"); //ORIGINAL didnt had status code 200
     res.status(200).json("Password INFO was UPDATED!");
   } catch (err) {
     console.log("Error Updating a Password Vault: ", err);
