@@ -5,7 +5,6 @@ const { jwtRefreshGenerator, jwtGenerator } = require("../utils/jwtGenerator");
 const handleRefreshToken = async (req, res) => {
   try {
     const cookies = req.cookies;
-    console.log("Cookies INSIDE refreshTokenController: ", cookies);
     if (!cookies?.refreshToken) {
       return res.status(401).json("Missing cookies");
     }
@@ -19,7 +18,6 @@ const handleRefreshToken = async (req, res) => {
     const payload = jwt.verify(refreshToken, process.env.jwtRefreshSecret, {
       ignoreExpiration: true,
     });
-    console.log("payload INSIDE refreshTokenController: ", payload);
     const user = await database.query(
       "SELECT refresh_token, user_id FROM users WHERE user_id = $1",
       [payload.user_id]
@@ -39,7 +37,6 @@ const handleRefreshToken = async (req, res) => {
         "UPDATE users SET refresh_token='{}' WHERE user_id=$1 RETURNING *",
         [hackedUser.rows[0].user_id]
       );
-      console.log("User Hacked? ~ Detected refresh token reuse attempt");
       res.cookie("isUserHacked", "isUserHacked", {
         maxAge: 60 * 1000, // 1 minute temporary cookie
         httpOnly: true,
@@ -74,12 +71,10 @@ const handleRefreshToken = async (req, res) => {
 
         // Refresh token was still valid
         const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
-        console.log("refreshTokenController CONTINUES...");
 
         // Grab the remaining time of the token that is about to be invalidated
         const newRTexpiryTimeSeconds =
           payload.exp - Date.parse(new Date()) / 1000;
-        console.log("newRTexpiryTimeSeconds: ", newRTexpiryTimeSeconds);
 
         // Create new refresh token
         const newRefreshToken = jwtRefreshGenerator(
@@ -102,7 +97,6 @@ const handleRefreshToken = async (req, res) => {
       }
     );
   } catch (err) {
-    console.log("handleRefreshToken err: ", err);
     res.status(403).json(err.message);
   }
 };

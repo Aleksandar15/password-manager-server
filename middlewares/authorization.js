@@ -4,7 +4,6 @@ module.exports = async (req, res, next) => {
   try {
     // 1 - get authorization headers data
     const authHeader = req.headers.authorization || req.headers.Authorization;
-    console.log("~~~~~1 authHeader INSIDE Authorization.js: ", authHeader);
 
     // #Case 1: user refreshToken has been used maliciously (handled in refreshTokenController)
     const cookies = req.cookies;
@@ -20,10 +19,6 @@ module.exports = async (req, res, next) => {
       return res.status(401).json("Session expired");
     }
 
-    console.log(
-      "!cookies?.refreshToken INSIDE authorization: ",
-      !cookies?.refreshToken
-    );
     // Case 3: user has removed cookies
     if (!cookies?.refreshToken) {
       return res.status(401).json("User has removed cookies");
@@ -35,17 +30,14 @@ module.exports = async (req, res, next) => {
     }
 
     const accessToken = authHeader.split(" ")[1];
-    console.log("~~~~~2 accessToken INSIDE Authorization.js: ", accessToken);
 
     // 3- set the user_id to the req.user
     const payload = jwt.verify(accessToken, process.env.jwtSecret);
-    console.log("~~~~~3 payload authorization.js ~> ", payload);
 
     req.user = payload.user_id;
 
     next();
   } catch (err) {
-    console.log("Authorization error: ", err.message);
     res.status(403).json("Authorization error");
   }
 };
