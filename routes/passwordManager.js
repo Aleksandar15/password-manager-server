@@ -76,7 +76,8 @@ router.get(`/passwords/:id`, authorization, async (req, res) => {
       "SELECT * FROM passwords WHERE password_id = $1",
       [id]
     );
-    res.json(passwordInfo.rows[0]);
+    // res.json(passwordInfo.rows[0]);
+    res.status(200).json("ADDED to the password vault");
   } catch (err) {
     console.log("Error getting user at ID ", req.params.id, " is: ", err);
     res.status(500).json("GET passwordInfo SERVER SIDE ERROR");
