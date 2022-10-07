@@ -11,7 +11,7 @@ const handleRefreshToken = async (req, res) => {
     }
     const refreshToken = cookies.refreshToken;
     res.clearCookie("refreshToken", {
-      // httpOnly: true,
+      httpOnly: true,
       sameSite: "None",
       secure: true,
     });
@@ -93,7 +93,7 @@ const handleRefreshToken = async (req, res) => {
         res.cookie("refreshToken", newRefreshToken, {
           // maxAge: 60 * 1000 * 60, // 1 hour
           maxAge: 60 * 1000 * 60 * 24, // 1 day
-          // httpOnly: true,
+          httpOnly: true,
           secure: true,
           sameSite: "None",
         });

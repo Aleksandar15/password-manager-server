@@ -112,7 +112,7 @@ const login = async (req, res) => {
     // Create secure cookie with refresh token
     res.cookie("refreshToken", newRefreshToken, {
       maxAge: 60 * 1000 * 60 * 24, // 1 day
-      // httpOnly: true, //for Postman tests turn this off
+      httpOnly: true, //for Postman tests turn this off
       secure: true,
       sameSite: "None",
     });
