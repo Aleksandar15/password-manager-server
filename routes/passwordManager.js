@@ -53,7 +53,7 @@ router.post(`/passwords`, authorization, async (req, res) => {
       [req.user, site_name, site_email, site_pw_encrypted, site_pw_iv]
     );
 
-    res.json(passwordInfo.rows[0]);
+    res.status(200).json("ADDED to the password vault");
   } catch (err) {
     res.status(500).json("addPassword SERVER SIDE ERROR");
   }
