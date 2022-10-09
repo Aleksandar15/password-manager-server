@@ -11,8 +11,10 @@ const handleRefreshToken = async (req, res) => {
     const refreshToken = cookies.refreshToken;
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "None",
       secure: true,
+      sameSite: "Strict",
+      path: "/",
+      domain: "alek-password-manager.netlify.app",
     });
 
     const payload = jwt.verify(refreshToken, process.env.jwtRefreshSecret, {
@@ -41,7 +43,7 @@ const handleRefreshToken = async (req, res) => {
         maxAge: 60 * 1000, // 1 minute temporary cookie
         httpOnly: true,
         secure: true,
-        sameSite: "None",
+        sameSite: "Strict",
       });
       return res.status(403).json("Detected refresh token reuse attempt");
     }
@@ -64,7 +66,7 @@ const handleRefreshToken = async (req, res) => {
             maxAge: 60 * 1000, // 1 minute
             httpOnly: true,
             secure: true,
-            sameSite: "None",
+            sameSite: "Strict",
           });
           return res.status(401).json("Token expired");
         }
@@ -90,9 +92,10 @@ const handleRefreshToken = async (req, res) => {
           maxAge: 60 * 1000 * 60 * 24, // 1 day
           httpOnly: true,
           secure: true,
-          sameSite: "None",
+          path: "/",
+          domain: "alek-password-manager.netlify.app",
+          sameSite: "Strict",
         });
-
         res.status(200).json({ accessToken });
       }
     );

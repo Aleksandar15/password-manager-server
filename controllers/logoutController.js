@@ -20,8 +20,10 @@ const handleLogout = async (req, res) => {
     if (user.rows.length === 0) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        sameSite: "None",
         secure: true,
+        sameSite: "Strict",
+        path: "/",
+        domain: "alek-password-manager.netlify.app",
       });
       return res
         .status(204)
@@ -39,8 +41,10 @@ const handleLogout = async (req, res) => {
 
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "None",
       secure: true,
+      sameSite: "Strict",
+      path: "/",
+      domain: "alek-password-manager.netlify.app",
     });
     res.status(200).json("Successful logout");
   } catch (err) {

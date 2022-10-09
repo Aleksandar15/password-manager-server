@@ -13,8 +13,10 @@ module.exports = async (req, res, next) => {
     if (cookies?.expiredRefreshToken) {
       res.clearCookie("expiredRefreshToken", {
         httpOnly: true,
-        sameSite: "None",
         secure: true,
+        sameSite: "Strict",
+        path: "/",
+        domain: "alek-password-manager.netlify.app",
       });
       return res.status(401).json("Session expired");
     }

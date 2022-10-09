@@ -10,8 +10,10 @@ const handleLogoutAllSessions = async (req, res) => {
     const refreshToken = cookies.refreshToken;
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "None",
       secure: true,
+      sameSite: "Strict",
+      path: "/",
+      domain: "alek-password-manager.netlify.app",
     });
     // Is refreshToken in database?
     const payload = jwt.verify(refreshToken, process.env.jwtRefreshSecret, {
@@ -24,8 +26,10 @@ const handleLogoutAllSessions = async (req, res) => {
     if (user.rows.length === 0) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        sameSite: "None",
         secure: true,
+        sameSite: "Strict",
+        path: "/",
+        domain: "alek-password-manager.netlify.app",
       });
       return res
         .status(204)
@@ -40,6 +44,7 @@ const handleLogoutAllSessions = async (req, res) => {
       "UPDATE users SET refresh_token=$1 WHERE user_id=$2 RETURNING *",
       [[], user.rows[0].user_id]
     );
+
     res.status(200).json("Successful logout");
   } catch (err) {
     res.status(500).json("Logout error");

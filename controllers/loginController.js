@@ -28,7 +28,6 @@ const login = async (req, res) => {
     const cookies = req.cookies;
     const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
     const expiryTime = loginForever ? "999 years" : "1h";
-    // const expiryTime = loginForever ? "999 years" : "7s";
 
     const newRefreshToken = jwtRefreshGenerator(
       user.rows[0].user_id,
@@ -59,8 +58,10 @@ const login = async (req, res) => {
       if (refreshTokenExistsInDatabase[0] !== refreshToken) {
         res.clearCookie("refreshToken", {
           httpOnly: true,
-          sameSite: "None",
           secure: true,
+          sameSite: "Strict",
+          path: "/",
+          domain: "alek-password-manager.netlify.app",
         });
         const hackedUser = await database.query(
           "UPDATE users SET refresh_token='{}' WHERE user_id=$1 RETURNING *",
@@ -72,8 +73,10 @@ const login = async (req, res) => {
       }
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        sameSite: "None",
         secure: true,
+        sameSite: "Strict",
+        path: "/",
+        domain: "alek-password-manager.netlify.app",
       });
     }
 
@@ -87,7 +90,9 @@ const login = async (req, res) => {
       maxAge: 60 * 1000 * 60 * 24, // 1 day
       httpOnly: true, //for Postman tests turn this off
       secure: true,
-      sameSite: "None",
+      path: "/",
+      domain: "alek-password-manager.netlify.app",
+      sameSite: "Strict",
     });
 
     // Send access token to the user

@@ -8,8 +8,8 @@ const publicRoutesAuth = (req, res) => {
   if (cookies?.isUserHacked) {
     res.clearCookie("isUserHacked", {
       httpOnly: true,
-      sameSite: "None",
       secure: true,
+      sameSite: "Strict",
     });
     return res.status(403).json("Is user hacked? - publicRoutesAuth");
   }
