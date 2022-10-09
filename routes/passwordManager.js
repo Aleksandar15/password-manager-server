@@ -14,14 +14,8 @@ router.get("/manager", authorization, async (req, res) => {
       [req.user]
     );
 
-    console.log(
-      "~_~_~_~_~_~_~req.user INSIDE passwordManager /manager: ",
-      req.user
-    );
-
     res.status(200).json(user.rows);
   } catch (err) {
-    console.log("passwordManager Server Side Error ~> ", err);
     res.status(500).json("passwordManager SERVER SIDE ERROR");
   }
 });
@@ -40,24 +34,18 @@ router.post("/manager/decryptpassword/:id", authorization, async (req, res) => {
     const { site_password: password, site_iv: iv } = passwordAndIv.rows[0];
     res.status(200).json(decrypt({ password, iv }));
   } catch (err) {
-    console.log("/manager/decryptpassword ERROR: ", err);
     res.status(404).json("ERROR Decrypting Password");
   }
 });
 
 // CREATE Password Info
 router.post(`/passwords`, authorization, async (req, res) => {
-  console.log(
-    "POST /passwords: process.env.secretPasswordEncryption",
-    process.env.secretPasswordEncryption
-  );
   try {
     const {
       website: site_name,
       email: site_email,
       password: site_password,
     } = req.body;
-    console.log("req.body INSIDE POST password addPassword: ", req.body);
     const encryptedPassword = encrypt(site_password);
     const { password: site_pw_encrypted, iv: site_pw_iv } = encryptedPassword;
     const addPassword = await database.query(
@@ -65,10 +53,8 @@ router.post(`/passwords`, authorization, async (req, res) => {
       [req.user, site_name, site_email, site_pw_encrypted, site_pw_iv]
     );
 
-    // res.json(passwordInfo.rows[0]);
-    res.status(200).json("ADDED to the password vault");
+    res.json(passwordInfo.rows[0]);
   } catch (err) {
-    console.log("POST: addPassword err: ", err);
     res.status(500).json("addPassword SERVER SIDE ERROR");
   }
 });
@@ -82,7 +68,6 @@ router.put("/passwords/:id", authorization, async (req, res) => {
       email: site_email,
       password: site_password,
     } = req.body;
-    console.log("req.body UPDATE server: ", req.body);
     const encryptedPassword = encrypt(site_password);
     const { password: site_pw_encrypted, iv: site_pw_iv } = encryptedPassword;
     const updateStoredPassword = await database.query(
@@ -96,7 +81,6 @@ router.put("/passwords/:id", authorization, async (req, res) => {
 
     res.status(200).json("Password INFO was UPDATED!");
   } catch (err) {
-    console.log("Error Updating a Password Vault: ", err);
     res.status(500).json("UPDATE password vault: SERVER SIDE ERROR");
   }
 });
@@ -115,7 +99,6 @@ router.delete("/passwords/:id", authorization, async (req, res) => {
 
     res.json("Password was deleted!");
   } catch (err) {
-    console.log("Error deleting Password from vault: ", err);
     res.status(500).json("deletePassword SERVER SIDE ERROR");
   }
 });

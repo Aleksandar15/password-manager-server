@@ -3,26 +3,12 @@ const jwt = require("jsonwebtoken");
 const publicRoutesAuth = (req, res) => {
   const cookies = req.cookies;
 
-  console.log(
-    "cookies INSIDE publicRoutesAuth BEFORE removing testCookie: ",
-    cookies,
-    "+ & cookies?.isUserHacked INSIDE publicRoutesAuth: ",
-    cookies?.isUserHacked
-  );
-  res.clearCookie("testCookie");
-  console.log(
-    "cookies INSIDE publicRoutesAuth AFTER removing testCookie: ",
-    cookies
-  );
-
   // Handle the `isUserHacked` temporary cookie provided by refreshTokenController
   // Its also handled inside authorization.js WITHOUT removal of the cookie (so it can be received in here)
   if (cookies?.isUserHacked) {
     res.clearCookie("isUserHacked", {
       httpOnly: true,
-      // sameSite: "None",
       secure: true,
-      // Clear new types of cookies:
       sameSite: "Strict",
     });
     return res.status(403).json("Is user hacked? - publicRoutesAuth");
