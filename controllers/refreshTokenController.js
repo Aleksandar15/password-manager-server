@@ -5,19 +5,30 @@ const { jwtRefreshGenerator, jwtGenerator } = require("../utils/jwtGenerator");
 const handleRefreshToken = async (req, res) => {
   try {
     const cookies = req.cookies;
+    console.log("Cookies INSIDE refreshTokenController: ", cookies);
     if (!cookies?.refreshToken) {
       return res.status(401).json("Missing cookies");
     }
     const refreshToken = cookies.refreshToken;
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "None",
+      // sameSite: "None",
       secure: true,
+      // sameSite: "Lax",
+      // domain: "alek-password-manager.netlify.app",
+      //
+      // 2:
+      // Clear new types of cookies:
+      sameSite: "Strict",
+      // 3:since #2 doesnt work/doesnt remove cookies refreshToken:
+      path: "/",
+      domain: "alek-password-manager.netlify.app",
     });
 
     const payload = jwt.verify(refreshToken, process.env.jwtRefreshSecret, {
       ignoreExpiration: true,
     });
+    console.log("payload INSIDE refreshTokenController: ", payload);
     const user = await database.query(
       "SELECT refresh_token, user_id FROM users WHERE user_id = $1",
       [payload.user_id]
@@ -37,11 +48,14 @@ const handleRefreshToken = async (req, res) => {
         "UPDATE users SET refresh_token='{}' WHERE user_id=$1 RETURNING *",
         [hackedUser.rows[0].user_id]
       );
+      console.log("User Hacked? ~ Detected refresh token reuse attempt");
       res.cookie("isUserHacked", "isUserHacked", {
         maxAge: 60 * 1000, // 1 minute temporary cookie
         httpOnly: true,
         secure: true,
-        sameSite: "None",
+        // sameSite: "None",
+        // Clear new types of cookies:
+        sameSite: "Strict",
       });
       return res.status(403).json("Detected refresh token reuse attempt");
     }
@@ -64,17 +78,21 @@ const handleRefreshToken = async (req, res) => {
             maxAge: 60 * 1000, // 1 minute
             httpOnly: true,
             secure: true,
-            sameSite: "None",
+            // sameSite: "None",
+            // Clear new types of cookies:
+            sameSite: "Strict",
           });
           return res.status(401).json("Token expired");
         }
 
         // Refresh token was still valid
         const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
+        console.log("refreshTokenController CONTINUES...");
 
         // Grab the remaining time of the token that is about to be invalidated
         const newRTexpiryTimeSeconds =
           payload.exp - Date.parse(new Date()) / 1000;
+        console.log("newRTexpiryTimeSeconds: ", newRTexpiryTimeSeconds);
 
         // Create new refresh token
         const newRefreshToken = jwtRefreshGenerator(
@@ -90,13 +108,33 @@ const handleRefreshToken = async (req, res) => {
           maxAge: 60 * 1000 * 60 * 24, // 1 day
           httpOnly: true,
           secure: true,
-          sameSite: "None",
+          // sameSite: "None",
+          // 2:
+          // sameSite: "Lax",
+          // domain: "alek-password-manager.netlify.app",
+          // domain: "www.alek-password-manager.netlify.app", //NEW: `modified url to start with WWW.` chrome scracthed "https" as potentially site is trying to hack me + uses `HSTS` + I am trying to write `WWW.` ONLY After Setting new jwtSecret's so IDK when and why it happened & what triggered it! //OLD~>//no changes
+          path: "/",
+          // 3:+2#:
+          // sameSite: "None", //doenst work
+          // sameSite: "Lax",
+          // 4:
+          // domain: "https://password-manager.fly.dev",
+          // 5:
+          // domain: "password-manager.fly.dev",
+          // 6:
+          // sameSite: "None",
+          domain: "alek-password-manager.netlify.app",
+          // 7:(not yet tested)
+          // sameSite: "Lax",
+          // 8:for tests
+          sameSite: "Strict",
         });
 
         res.status(200).json({ accessToken });
       }
     );
   } catch (err) {
+    console.log("handleRefreshToken err: ", err);
     res.status(403).json(err.message);
   }
 };

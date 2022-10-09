@@ -31,6 +31,7 @@ const register = async (req, res) => {
     // 5 - Respond with success message:
     res.status(200).json("Register successful!");
   } catch (err) {
+    console.log("REGISTER Server Side Error: ", err.message);
     res.status(500).json("Server Side Error Registering!");
   }
 };
