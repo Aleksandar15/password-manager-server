@@ -10,7 +10,7 @@
 - Navigate (cd) into your project directory.
 - Run `npm install` in your command line.
 - Run `npm start` in your command line.
-- Visit http://localhost:3000 in your browser!
+- Visit http://localhost:3003 in your browser!
 
 # NOTES
 
