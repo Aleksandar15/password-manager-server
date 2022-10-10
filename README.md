@@ -18,6 +18,8 @@
 
 **2.** Your **`secretPasswordEncryption`** secret inside `.env` file must be of 32 bytes (which equals to 256 bits) which means it **must** be **exactly** 32 characters long.
 
+**3.** You **must** add your frontend URL to the `allowedOrigins` file located in `config/allowedOrigins.js` directory so that CORS will allow the requests to be made to the server.
+
 ### HOW TO's
 
 ###### How to clone the project?
