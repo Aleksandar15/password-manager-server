@@ -14,7 +14,7 @@
 
 # NOTES
 
-**1.** In order to run my server successfully on your local development by combining my <a href="https://github.com/Aleksandar15/password-manager-frontend">frontend</a> you may want to remove all the `domain` properties on authentication (`refreshToken`'s) cookies creation or just modify `domain`'s values to the appropriate URL your frontend runs on.
+**1.** In order to run my full-stack app successfully on your local development by combining _this_ server & my <a href="https://github.com/Aleksandar15/password-manager-frontend">frontend</a> you may want to remove all the `domain` properties on authentication (`refreshToken`'s) cookies creation or just modify `domain`'s values to the appropriate URL your frontend runs on.
 
 **2.** Your **`secretPasswordEncryption`** secret inside `.env` file must be of 32 bytes (which equals to 256 bits) which means it **must** be **exactly** 32 characters long.
 
