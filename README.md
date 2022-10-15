@@ -8,13 +8,14 @@ I created this project with one of the main goal being that to challenge my web 
 
 ###### Postgres DB + ExpressJS + ReactJS + NodeJS
 
-## Run my project
+## Run my backend project
 
 - Clone this project.
 - Navigate (cd) into your project directory.
 - Run `npm install` in your command line.
 - Run `npm start` in your command line.
 - Visit http://localhost:3003 in your browser!
+- _Optional_: you may want to connect it with my <a href="https://github.com/Aleksandar15/password-manager-frontend">frontend</a> project.
 
 # NOTES
 
