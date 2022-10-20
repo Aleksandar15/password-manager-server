@@ -4,6 +4,10 @@
 
 I created this project with one of the main goal being that to challenge my web security skills. In the process I learned that while you can't control which links the frontend user clicks or which apps they may install (_that could be malicious_), we as developers should focus to minimize those risks by maximizing security steps required to access sensitive data. All that **must** be achieved by finding a sweet spot between trying to not annoy our users and securing their data.
 
+#### Special challenges I set upon myself:
+
+My main goal was to use as minimum libraries as possible and to keep following the DRY principle by building reusable code myself. While also with React I avoided any unnecessary re-renders & used the necessary renders to my advantage for features like `multi-device` for example: user A logged on 'device A' modifies its "password vault", then the same user A but logged on 'device B' - when they try any CRUD operations on their (unmodified) "password vault" - they will get the latest changes **without any refresh**.
+
 #### Visit my live website here: https://alek-password-manager.netlify.app
 
 ##### Test login user:
