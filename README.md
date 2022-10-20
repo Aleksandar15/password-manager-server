@@ -8,8 +8,8 @@ I created this project with one of the main goal being that to challenge my web 
 
 ##### Test login user:
 
--E-mail: test
--Password: test
+- E-mail: test
+- Password: test
 
 #### My PERN Stack technologies:
 
