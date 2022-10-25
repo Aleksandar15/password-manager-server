@@ -47,6 +47,8 @@ const handleRefreshToken = async (req, res) => {
       });
       return res.status(403).json("Detected refresh token reuse attempt");
     }
+
+    // Invalidate the received valid refresh token & Goal: deliver new refreshToken + accessToken
     const newRefreshTokenArray = user.rows[0].refresh_token.filter(
       (allRTinDB) => allRTinDB !== refreshToken
     );
@@ -74,7 +76,7 @@ const handleRefreshToken = async (req, res) => {
         // Refresh token was still valid
         const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
 
-        // Grab the remaining time of the token that is about to be invalidated
+        // Grab the remaining time of the valid refresh token that is about to be invalidated
         const newRTexpiryTimeSeconds =
           payload.exp - Date.parse(new Date()) / 1000;
 
