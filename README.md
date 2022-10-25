@@ -1,4 +1,4 @@
-# Password Manager Server
+# Password Manager V2 Server
 
 #### About my Full-Stack Password Manager app:
 
