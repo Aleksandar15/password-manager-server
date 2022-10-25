@@ -8,16 +8,16 @@ I created this project with one of the main goal being that to challenge my web 
 
 ##### On the frontend
 
-- With React I avoided any unnecessary re-renders & used strategic re-renders to my advantage for features like `multi-device` for example: _user A_ logged on '_device A_' modifies its "password vault", then the same _user A_ but logged on '_device B_' - when they try any CRUD operations on their (unrefreshed) "password vault" page - they will get the latest changes (made on _device A_) **without any refresh** on their _device B_. While also my goal was to use as minimum libraries as possible and to keep following the DRY principle by building reusable code myself.
+- With React I avoided any unnecessary re-renders & used strategic re-renders to my advantage for features like `multi-device` for example: _user A_ logged on '_device A_' modifies its "password vault", then the same _user A_ but logged on '_device B_' - when they try any CRUD operations on their (unrefreshed) "password vault" page - they will get the latest changes (made on _device A_) **without any refresh** on their _device B_. While also my goal was to use as minimum libraries as possible and to keep following the DRY principle by building reusable components myself & creating custom hooks.
 
 ##### On the backend
 
 - I implemented "_refresh tokens_" which are long-lived besides "_access tokens_" which are short-lived. However I gave the clients an option to stay signed-in until they manually log out in cases where they fully trust their device & network. The user requires a valid _refresh token_ in order to request a new _access token_ - on success they get both new _accessToken_ & _refreshToken_ - while on invalid _refresh token_ the user is booted to the home page.
-- Anti-hacks features: in case where the user's _refreshToken_ is not inside the database -> it means the _refreshToken_ was used by someone else (I suspect it's a hacker) and I alert the user about the potential threat.
+- Anti-hacks security: in case where the user's _refreshToken_ is not inside the database -> it means the _refreshToken_ was used by someone else (I suspect it's a hacker) and I alert the user about the potential threat.
 
 ##### The challenge
 
-- "_Multi-device_" feature allows the _user A_ logged on _device A_ to "_log out all devices_"(meaning: empties out the array of _refreshToken_'s in the database) which will technically log-out the same _user A_ but logged on _device B_ & my "safety alert-message" about _anti-hacks_ will get triggered, therefore, the message itself has to have empathy about such a case where for example: some of their family members clicked the "_logout all devices_" button. It was kind of like a Catch-22 where I couldn't have a separate message and the solution was a _guided empathetic message_ to make sure I'm not misleading my users.
+- "_Multi-device_" feature allows the _user A_ logged on _device A_ to "_log out all devices_"(meaning: empties out the array of _refreshToken_'s in the database) which will technically log-out the same _user A_ but logged on _device B_ & my "safety alert-message" about _anti-hacks_ will get triggered, therefore, the message itself has to have empathy about such a case scenario where some of their family members clicked the "_logout all devices_" button on another device as an example. It was kind of like a Catch-22 where I couldn't have a separate message and the solution was a _guided-empathetic-message_ to make sure I'm not misleading my users.
 
 #### Visit my live website here: https://alek-password-manager.netlify.app
 
