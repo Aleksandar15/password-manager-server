@@ -1,6 +1,6 @@
 # Password Manager V2 Server
 
-##### -> Here is the <a href="https://github.com/Aleksandar15/password-manager-frontend">frontend</a> code
+##### -> Here is my <a href="https://github.com/Aleksandar15/password-manager-frontend">frontend</a> code
 
 #### About my Full-Stack Password Manager app:
 
