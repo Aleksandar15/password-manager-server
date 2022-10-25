@@ -12,7 +12,7 @@ I created this project with one of the main goal being that to challenge my web 
 
 ##### On the backend
 
-- I implemented "_refresh tokens_" which are long-lived besides "_access tokens_" which are short-lived. However I gave the clients an option to stay signed-in until they manually log out in cases where they fully trust their device & network. The user requires a valid _refresh token_ in order to request a new _access token_ - on success they get both new _accessToken_ & _refreshToken_ - while on invalid or expired _refresh token_ the token is removed from the database and the user is alerted accordingly and redirected to the login page on the frontend.
+- I implemented "_refresh tokens_" which are long-lived besides "_access tokens_" which are short-lived. However I gave the clients an option to stay signed-in until they manually log out in cases where they fully trust their device & network. The user requires a valid _refresh token_ in order to request a new _access token_ - on success they get both new _accessToken_ & _refreshToken_ - while on invalid or expired _refresh token_ the said token is removed from the database and the user is alerted accordingly and redirected to the login page on the frontend.
 - Anti-hacks security: in case where the user's _refreshToken_ is not inside the database -> it means the _refreshToken_ was used by someone else (I suspect it's a hacker) and I alert the user about the potential threat.
 
 ##### The challenge
