@@ -49,6 +49,7 @@ const handleRefreshToken = async (req, res) => {
     }
 
     // Invalidate the received valid refresh token & Goal: deliver new refreshToken + accessToken
+    // Here just filter out the received refreshToken & below from database
     const newRefreshTokenArray = user.rows[0].refresh_token.filter(
       (allRTinDB) => allRTinDB !== refreshToken
     );
@@ -85,6 +86,7 @@ const handleRefreshToken = async (req, res) => {
           user.rows[0].user_id,
           newRTexpiryTimeSeconds
         );
+        // "Invalidate" old ("used"/received) refreshToken && Add the newRefreshToken to Database
         const newRefreshTokenDatabase = await database.query(
           "UPDATE users SET refresh_token=$1 WHERE user_id = $2 RETURNING user_id, refresh_token",
           [[...newRefreshTokenArray, newRefreshToken], user.rows[0].user_id]
