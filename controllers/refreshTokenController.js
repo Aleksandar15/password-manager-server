@@ -49,7 +49,10 @@ const handleRefreshToken = async (req, res) => {
     }
 
     // Invalidate the received valid refresh token & Goal: deliver new refreshToken + accessToken
-    // Here just filter out the received refreshToken & below from database
+
+    // Here just filter out the "used" 1 refreshToken (received from client-side)
+    // from the Array of all the refresh tokens found in the database associated with the user
+    // & below "invalidate" (remove) it (from database)
     const newRefreshTokenArray = user.rows[0].refresh_token.filter(
       (allRTinDB) => allRTinDB !== refreshToken
     );
@@ -61,6 +64,7 @@ const handleRefreshToken = async (req, res) => {
       async (err, payload) => {
         if (err) {
           //if expired
+          // Even if expired => Still remove it from the database
           const saveRefreshTokenArray = await database.query(
             "UPDATE users SET refresh_token=$1 WHERE user_id=$2 RETURNING *",
             [[...newRefreshTokenArray], user.rows[0].user_id]
@@ -74,10 +78,14 @@ const handleRefreshToken = async (req, res) => {
           return res.status(401).json("Token expired");
         }
 
-        // Refresh token was still valid
+        // Refresh token was still valid => Create new accessToken with short expiry time
+        // Goal is accessToken to be used only in a single 1 request (hence the short expiry)
         const accessToken = jwtGenerator(user.rows[0].user_id, "5s");
 
-        // Grab the remaining time of the valid refresh token that is about to be invalidated
+        // Grab the remaining time of the "valid" (non-expired) refresh token 'refreshToken'
+        // that is about to be "invalidated" (removed from Database) because
+        // it was used to create (new) 'accessToken' for response to the frontend's interceptors.
+        // And exchange it with new refresh token 'newRefreshToken' && Add it to Database
         const newRTexpiryTimeSeconds =
           payload.exp - Date.parse(new Date()) / 1000;
 
@@ -86,7 +94,9 @@ const handleRefreshToken = async (req, res) => {
           user.rows[0].user_id,
           newRTexpiryTimeSeconds
         );
-        // "Invalidate" old ("used"/received) refreshToken && Add the newRefreshToken to Database
+        // "Invalidate" old ("used") refreshToken
+        // by adding the *filtered* array containing the rest of refresh tokens related to the user
+        // && Add the newRefreshToken to Database
         const newRefreshTokenDatabase = await database.query(
           "UPDATE users SET refresh_token=$1 WHERE user_id = $2 RETURNING user_id, refresh_token",
           [[...newRefreshTokenArray, newRefreshToken], user.rows[0].user_id]
