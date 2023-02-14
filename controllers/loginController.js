@@ -69,7 +69,7 @@ const login = async (req, res) => {
         );
         return res
           .status(403)
-          .json("Detected used refresh token in user's cookies"); //User must always have unused refresh token unless he logged out + I also shouldnt be checking against expired tokens BUT THEN `undefined!=='token'` ?->THATS SADLY TRUTHY statement and will return WRONG JSON so I Msut use an jwt.verify with a whole error and decoded HANDLERS?!
+          .json("Detected used refresh token in user's cookies");
       }
       res.clearCookie("refreshToken", {
         httpOnly: true,
