@@ -32,9 +32,9 @@ INSERT INTO users (user_name, user_email, user_password) VALUES ('ALEK', 'alek@g
 -- insert fake passwords info:
 INSERT INTO passwords (user_id, site_name, site_email, site_password, site_iv) VALUES ('fake-user-id-1', 'instagram.com', 'alek@gmail.com', 'encypted-password', 'encrypted-iv') RETURNING *;
 
--- Modify refresh_token
+-- Modify 'refresh_token' array
 UPDATE users SET refresh_token='{jwt-token}' WHERE user_email='alek@gmail.com'; -- Add refresh_token to database
-UPDATE users SET refresh_token='{}' WHERE refresh_token=$1; -- Remove refresh_token for logoutController.js
+UPDATE users SET refresh_token='{}' WHERE refresh_token=$1; -- Empty out the 'refresh_token' array for logoutAllController.js
 
 -- Get all* user's info of all users by a matching KEY user_id:
 SELECT * FROM users LEFT JOIN passwords ON users.user_id = passwords.user_id ORDER BY password_id ASC;
