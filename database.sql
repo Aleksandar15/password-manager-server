@@ -55,4 +55,9 @@ SELECT * FROM users LEFT JOIN passwords ON users.user_id = passwords.user_id WHE
 -- ON DELETE CASCADE -- is required to the FOREGIN KEY -> would allow to delete the referencing rows ('passwords' table) if I were to `DELETE FROM users WHERE user_id=$1`, 
 -- otherwise will fail if there is any data in `passwords` table by the matching 'user_id'.
 -- Use-case scenario: if user wants to delete their account - their 'passwords vault' should also be removed.
+
+
+
+-- Modify constraints without dropping table 'passwords'
+-- for when table 'passwords' contains data & we want to retain the data + also add new constraints:
 -- ALTER TABLE passwords DROP CONSTRAINT passwords_user_id_fkey, ADD CONSTRAINT passwords_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
