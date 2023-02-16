@@ -29,7 +29,7 @@ ALTER TABLE users ADD refresh_token VARCHAR(255)[];
 -- insert fake users
 INSERT INTO users (user_name, user_email, user_password) VALUES ('ALEK', 'alek@gmail.com', 'password');
 
--- insert fake passwords info:
+-- insert dummy passwords vault info:
 INSERT INTO passwords (user_id, site_name, site_email, site_password, site_iv) VALUES ('fake-user-id-1', 'instagram.com', 'alek@gmail.com', 'encypted-password', 'encrypted-iv') RETURNING *;
 
 -- Modify 'refresh_token' array
@@ -40,7 +40,7 @@ UPDATE users SET refresh_token='{}' WHERE refresh_token=$1; -- Empty out the 're
 SELECT * FROM users LEFT JOIN passwords ON users.user_id = passwords.user_id ORDER BY password_id ASC;
 -- Get all* user's info of a particuler user by user_id:
 SELECT * FROM users LEFT JOIN passwords ON users.user_id = passwords.user_id WHERE users.user_id='fake-user-id-1' ORDER BY password_id ASC;
--- *Modify based on needs
+-- *All or particular data based on needs
 
 -- REMINDER COMMANDS:
 -- \l -- all databases
