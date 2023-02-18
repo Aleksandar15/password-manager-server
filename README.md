@@ -60,3 +60,10 @@ I created this project with one of the main goal being that to challenge my web 
 ###### How to connect to the frontend?
 
 ##### Clone the frontend code from <a href="https://github.com/Aleksandar15/password-manager-frontend">here</a> & follow the instructions there.
+
+---
+
+More info:
+
+1. <a href="https://github.com/Aleksandar15/Password-Manager-frontend/blob/main/src/components/PersistLogin/PersistLogin.js">`PersistLogin`</a> on frontend could be named "`PersistLoading`" because throughout development I modified it to persist "`Loading`" page always and to never give away an 'empty skeleton-page' to unauthorized user. I compared my app to instagram for inspiration.and achieved exactly what I imagined. All the while auth-checks are handled in each components and each component has "`Loading`" as default state which is pretty cool.
+2. <a href="https://github.com/Aleksandar15/password-manager-server/blob/main/controllers/refreshTokenController.js">`refreshTokenController`</a> on the server is rotating each valid non-expired `refreshToken` with a new one which passes 'expiryTime' from the old one which was now "invalidated" - meaning it was removed from database & replaced with `newRefreshToken`. That makes for a perfect security feature I implemented on my app.
