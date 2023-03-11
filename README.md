@@ -2,6 +2,13 @@
 
 ##### -> Here is my <a href="https://github.com/Aleksandar15/password-manager-frontend">frontend</a> code
 
+#### Visit my live website here: https://alek-password-manager.netlify.app
+
+##### Test login user:
+
+- E-mail: test@test.com
+- Password: test
+
 #### About my Full-Stack Password Manager app:
 
 I created this project with one of the main goal being that to challenge my web security skills. In the process I learned that while you can't control which links the frontend user clicks or which apps they may install (_that could be malicious_), we as developers should focus to minimize those risks by maximizing security steps required to access sensitive data. All that **must** be achieved by finding a sweet spot between trying to not annoy our users and securing their data.
@@ -20,13 +27,6 @@ I created this project with one of the main goal being that to challenge my web 
 ##### The challenge
 
 - "_Multi-device_" feature allows the _user A_ logged on _device A_ to "_log out all devices_"(meaning: empties out the array of _refreshToken_'s in the database) which will technically log-out the same _user A_ but logged on _device B_ & my "safety alert-message" about _anti-hacks_ will get triggered, therefore, the message itself has to have empathy about such a case scenario where some of their family members clicked the "_logout all devices_" button on another device as an example. It was kind of like a Catch-22 where I couldn't have a separate message and the solution was a _guided-empathetic-message_ to make sure I'm not misleading my users.
-
-#### Visit my live website here: https://alek-password-manager.netlify.app
-
-##### Test login user:
-
-- E-mail: test@test.com
-- Password: test
 
 #### My PERN Stack technologies:
 
