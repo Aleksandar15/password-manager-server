@@ -63,7 +63,7 @@ I created this project with one of the main goal being that to challenge my web 
 
 ---
 
-**More info**:
+**More info (*extra reminders for me*)**:
 
 1. <a href="https://github.com/Aleksandar15/Password-Manager-frontend/blob/main/src/components/PersistLogin/PersistLogin.js">`PersistLogin`</a> on frontend could be named "`PersistLoading`" because throughout development I modified it to persist "`Loading`" page always and to never give an '_empty skeleton-page_' of a protected route (see ex. #1.1). I compared my app to instagram for inspiration and achieved exactly what I imagined. All the while auth-checks are handled in each component and they all have "`Loading`" as default state which is pretty cool.
 
@@ -72,3 +72,6 @@ I created this project with one of the main goal being that to challenge my web 
 2. <a href="https://github.com/Aleksandar15/password-manager-server/blob/main/controllers/refreshTokenController.js">`refreshTokenController`</a> on the server is rotating each valid non-expired `refreshToken` with a new one and I am passing the remaining '_expiryTime_' from the old one which was now "_invalidated_" - meaning it was removed from database & replaced with `newRefreshToken`. That's a perfect security feature I implemented on my app.
 
 3. <a href="https://github.com/Aleksandar15/Password-Manager-frontend/blob/main/src/Utils/api/axios.js" target="_blank">`Axios`</a> frontend utils created using `axios.create` method by default parses my JSON data behind the scenes hence why I don't use `JSON.parse` on my backend. If I were to send a JSON I'd need the <a href="https://axios-http.com/docs/req_config" target="_blank">`transformRequest`</a> function.
+
+4. Server is deployed on <a href="https://fly.io/docs/apps/deploy">fly.io</a> which allows only 1 server to be run for free which is available 24/7 (*no sleep time*), well actually 5 "*clusters*" are free but the *node.js* server takes up 2 and the <a href="https://fly.io/docs/postgres/">postgres</a> database 1, so the remaining 2 can't be used for another server.
+    - As of April 2023 they seem to have fixed that issue, now: 1 server takes up 1 VM (*virtual machine*) and 1 database takes up 1VM, but <a href="https://fly.io/docs/about/pricing/#free-allowances">free allowance</a> is reduced to 3VM, so it remains only 1 full backend for free.
